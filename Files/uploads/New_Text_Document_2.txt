@@ -1,0 +1,70 @@
+<?php
+//session_start();
+include '../shared/head.php';
+include '../shared/nav.php';
+include '../general/configDB.php';
+include '../general/functions.php';
+$select = "SELECT role.name Rol , admins.id  , admins.name  FROM admins JOIN role ON admins.roleId = role.id";
+$s = mysqli_query($conn, $select);
+$std_id = $_GET['edit'];
+if (isset($_POST['assign']) && isset($_GET['edit'])) {
+    foreach ($_POST['assign'] as $user_id) {
+        $sql = "INSERT INTO admin_std(user_id, std_id) VALUES ('$user_id', $std_id)";
+        $stmt = $conn->prepare($sql);
+        $stmt->execute();
+    }    
+}
+?>
+<main id="main" class="main">
+
+    <div class="pagetitle">
+        <h1>Users</h1>
+        <nav>
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a href="http://localhost/QWF/index.php">Home</a></li>
+                <li class="breadcrumb-item">users</li>
+                <li class="breadcrumb-item active">List Of Users</li>
+            </ol>
+        </nav>
+    </div><!-- End Page Title -->
+    <form action="<?= $_SERVER['PHP_SELF'] ?>?edit=<?= $std_id ?>" method="POST">
+        <div class="container col-6">
+            <div class="card">
+                <div class="card-body">
+                    <table class="table table-dark table-bordered">
+                        <thead>
+                            <tr>
+                                <th scope="col">ID</th>
+                                <th scope="col">user</th>
+                                <th scope="col">Role</th>
+                                <th scope="col" colspan="">Actions</th> <!-- New column for delete button -->
+                                <th>Assign</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <?php foreach ($s as $user) { ?>
+                                <tr>
+                                    <td><?php echo $user['id']; ?></td>
+                                    <td><?php echo $user['name']; ?></td>
+                                    <td><?php echo $user['Rol']; ?></td>
+                                    <!-- Delete button with a link to the delete script -->
+                                    <td>
+                                        <a href="users.php?delete=<?php echo $user['id']; ?>" class="btn btn-danger" onclick="location.reload()">Delete</a>
+                                    </td>
+                                    <td>
+                                        <input type="checkbox" value="<?= $user['id'] ?>" name="assign[]"
+
+                                        >
+                                    </td>
+
+                                </tr>
+                            <?php } ?>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+        <button type="submit" class="btn btn-primary"> afpaw[fkaw[</button>
+    </form>
+</main>
+<?php include '../shared/script.php'; ?>
